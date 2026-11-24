@@ -2,7 +2,7 @@
 
 ## 1.1 Contexte du projet
 
-Orion développe MicroCRM, une application de gestion de la relation client (CRM) simplifiée, utilisée par ses départements technique et commercial pour gérer des personnes et des organisations. Jusqu'ici, les livraisons étaient faites à la main, avec des retards et des erreurs. Maria, CTO d'Orion, demande d'industrialiser la chaîne de livraison de l'application.
+Orion développe MicroCRM, une application de gestion de la relation client (CRM) simplifiée, utilisée par ses départements technique et commercial pour gérer des personnes et des organisations. Jusqu'ici, les déploiements étaient faits à la main, avec des retards et des erreurs. Maria, CTO d'Orion, demande d'industrialiser la chaîne de livraison de l'application.
 
 Le dépôt reçu (`OpenClassrooms-Student-Center/P7-FSJA`, deux commits) contient :
 
@@ -11,14 +11,14 @@ Le dépôt reçu (`OpenClassrooms-Student-Center/P7-FSJA`, deux commits) contien
 - un `Dockerfile` à plusieurs étapes, qui produit une image pour le front (servi par Caddy), une image pour le back et une image tout-en-un de démonstration ;
 - aucune intégration continue, aucun fichier Docker Compose, aucune release.
 
-Commandes lancées en local le 14/11/2026 (Java 21, Node 24), en partant du README :
+Commandes lancées en local le 14/11/2026 (Java 21, Node 24). Celles du back et des tests viennent du README ; pour le front, le README ne donne que `npm install` et `npx @angular/cli serve`, et le build a été lancé avec `npm ci` et `npm run build` :
 
 | Commande | Résultat | Cause et contournement |
 | --- | --- | --- |
 | `./gradlew build` (dans `back/`) | échec : `Permission denied` | `gradlew` est commité sans droit d'exécution ; `bash gradlew build` réussit (2 tests sur 2). Correction suivie dans l'[issue #12](https://github.com/Weavyx/orion-microcrm/issues/12) |
 | `java -jar build/libs/microcrm-0.0.1-SNAPSHOT.jar` | l'API démarre sur le port 8080 | les données sont perdues à chaque redémarrage (base en mémoire) |
 | `npm ci` puis `npm run build` (dans `front/`) | succès, sortie dans `dist/microcrm` | |
-| `npm test` (dans `front/`) | 8 tests sur 8, mais la commande ne rend jamais la main et ouvre une fenêtre Chrome | Karma est configuré en mode surveillance ; `npx ng test --no-watch --browsers=ChromeHeadless` s'arrête avec un code de sortie 0 (lancé avec `CHROME_BIN=/usr/bin/google-chrome`) |
+| `npm test` (dans `front/`) | 8 tests sur 8, mais la commande ne rend jamais la main et ouvre une fenêtre Chrome | `ng test` reste en mode surveillance, qu'aucune option du projet ne désactive ; `npx ng test --no-watch --browsers=ChromeHeadless` s'arrête avec un code de sortie 0 (lancé avec `CHROME_BIN=/usr/bin/google-chrome`) |
 
 L'analyse complète (constats, veille des versions, bonnes pratiques) est dans l'[annexe A](annexe-a-analyse-initiale.md).
 

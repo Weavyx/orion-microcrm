@@ -6,11 +6,11 @@ Colonne « Vérification » : « lu » signifie constaté en lisant le fichier, 
 
 ## A.1 Constats sur le code reçu
 
-La numérotation d'origine est conservée ; les numéros C2, C3, C5 et C11 ont été reclassés en contraintes (A.3) ou en veille (A.4).
+La numérotation d'origine est conservée : C2, C3, C5 et C11 ont été reclassés en contraintes (A.3) ou en veille (A.4) ; C19 a été retiré, une relecture du fichier l'ayant infirmé.
 
 | # | Emplacement | Constat | Vérification | Suite donnée |
 | --- | --- | --- | --- | --- |
-| C1 | `front/karma.conf.js` | Trois navigateurs déclarés (`ChromeHeadlessNoSandbox`, `ChromeHeadless`, `Chrome` avec fenêtre), mode surveillance et `restartOnFileChange: true` : `npm test` ne rend jamais la main | exécuté | CI : options `--no-watch --browsers=ChromeHeadless` en ligne de commande, fichier inchangé (section 2) |
+| C1 | `front/karma.conf.js` | Trois navigateurs déclarés (`ChromeHeadlessNoSandbox`, `ChromeHeadless`, `Chrome` avec fenêtre) et `restartOnFileChange: true` ; aucune option du projet ne désactive le mode surveillance de `ng test`, donc `npm test` ne rend jamais la main | lu ; exécuté | CI : options `--no-watch --browsers=ChromeHeadless` en ligne de commande, fichier inchangé (section 2) |
 | C4 | `back/build.gradle` | `spring-boot-starter-data-jpa` déclaré deux fois ; Gradle ignore le doublon | lu ; build réussi | recommandation (section 9) |
 | C6 | `front/src/app/config.ts` | `API_BASE_URL = "http://localhost:8080"` en dur : l'URL est fixée au build, et l'API doit être joignable sur `localhost:8080` depuis le navigateur | lu | conteneurisation et déploiement (section 3) |
 | C7 | back | Base HSQLDB en mémoire : les données ne survivent pas à un redémarrage | exécuté (personne créée, absente après redémarrage) | sauvegarde (section 7) |
@@ -24,7 +24,6 @@ La numérotation d'origine est conservée ; les numéros C2, C3, C5 et C11 ont �
 | C16 | `front/package.json`, lockfile | `jasmine-core ~5.1.0` déclaré, mais Karma exécute la version 4.6.0 (copie installée par `karma-jasmine` 5.1.0) | lu ; écran de Karma | mise à jour (section 8) |
 | C17 | `SpringDataRestCustomization.java` | CORS ouvert à toutes les origines (GET, POST, PATCH, DELETE) et aucune authentification | lu ; `POST` accepté sans identifiant | sécurité (section 5) |
 | C18 | `Dockerfile:40` | Cible `back` : `EXPOSE 4200` alors que l'API écoute sur 8080 (4200 est le port de `ng serve`) ; sans effet sur le fonctionnement, mais trompeur | lu | conteneurisation (section 3) |
-| C19 | `misc/docker/supervisor.ini:24` | `make_main_rpcinterface.` se termine par un point : pourrait empêcher supervisord de démarrer (image `standalone`) | lu ; effet non vérifié | conteneurisation (section 3), à observer |
 | C20 | `Dockerfile:34,42` | Nom du JAR écrit en dur avec la version (`microcrm-0.0.1-SNAPSHOT.jar`) ; `build/libs` contient aussi `microcrm-0.0.1-SNAPSHOT-plain.jar` | lu | conteneurisation (section 3) et release (section 2) |
 | C21 | `Dockerfile:44-54` | Cible `standalone` : fusionne les systèmes de fichiers des images `front` et `back` (les fichiers communs sont écrasés) et lance deux processus avec supervisord | lu ; écrasement déduit | recommandation ; le compose prévu utilisera les cibles `front` et `back` (section 3) |
 | C22 | `Dockerfile:18,23,32,36` | Images finales `alpine:3.19` (hors support depuis le 01/11/2025), Caddy et JRE installés par `apk` au lieu d'images officielles ; aucune instruction `USER` (exécution en root) ; `apk add` sans `--no-cache` | lu | conteneurisation (section 3) |
@@ -90,4 +89,4 @@ Sources : documentation GitHub (Java avec Gradle, Node.js, usage sécurisé de G
 
 ## A.6 Exemple open source analysé
 
-`jhipster/jhipster-sample-app`, fichier `.github/workflows/github-actions.yml` : workflow d'une application de même pile (Spring Boot et Angular). Pratiques écartées : `chmod +x mvnw` dans la CI (contournement répété à chaque exécution au lieu de corriger le dépôt), actions dans des versions anciennes, ni cache ni `permissions`, `npm install` au lieu de `npm ci`. Limite : un seul exemple a été analysé.
+`jhipster/jhipster-sample-app` (application de démonstration du générateur JHipster, même pile Spring Boot et Angular), fichier `.github/workflows/github-actions.yml`, analysé en réponse à la recommandation de la mission de s'appuyer sur des exemples open source. Conclusion : même un projet de référence n'applique pas toutes les pratiques de A.5, ce qui confirme qu'elles doivent être choisies et justifiées plutôt que recopiées. L'exemple lance `chmod +x mvnw` dans la CI : c'est le contournement écarté ici pour `gradlew` (C13), au profit d'une correction dans le dépôt. Il utilise aussi des actions dans des versions anciennes, ni cache ni `permissions`, et `npm install` au lieu de `npm ci`. Limite : un seul exemple a été analysé.
