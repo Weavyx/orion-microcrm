@@ -10,7 +10,7 @@ La numérotation d'origine est conservée : C2, C3, C5 et C11 ont été reclass�
 
 | # | Emplacement | Constat | Vérification | Suite donnée |
 | --- | --- | --- | --- | --- |
-| C1 | `front/karma.conf.js` | Trois navigateurs déclarés (`ChromeHeadlessNoSandbox`, `ChromeHeadless`, `Chrome` avec fenêtre) et `restartOnFileChange: true` ; aucune option du projet ne désactive le mode surveillance de `ng test`, donc `npm test` ne rend jamais la main | lu ; exécuté | CI : options `--no-watch --browsers=ChromeHeadless` en ligne de commande, fichier inchangé (section 2) |
+| C1 | `front/karma.conf.js`, `front/angular.json`, `front/package.json` | Trois navigateurs déclarés (`ChromeHeadlessNoSandbox`, `ChromeHeadless`, `Chrome` avec fenêtre) et `restartOnFileChange: true` ; aucune option du projet ne désactive le mode surveillance de `ng test`, donc `npm test` ne rend jamais la main | lu ; exécuté | CI : options `--no-watch --browsers=ChromeHeadless` en ligne de commande, fichier inchangé (section 2) |
 | C4 | `back/build.gradle` | `spring-boot-starter-data-jpa` déclaré deux fois ; Gradle ignore le doublon | lu ; build réussi | recommandation (section 9) |
 | C6 | `front/src/app/config.ts` | `API_BASE_URL = "http://localhost:8080"` en dur : l'URL est fixée au build, et l'API doit être joignable sur `localhost:8080` depuis le navigateur | lu | conteneurisation et déploiement (section 3) |
 | C7 | back | Base HSQLDB en mémoire : les données ne survivent pas à un redémarrage | exécuté (personne créée, absente après redémarrage) | sauvegarde (section 7) |
